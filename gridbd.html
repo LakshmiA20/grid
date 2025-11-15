@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Brain Drain Grid</title>
+
+    <style>
+      body {
+        background: #0a0a0a;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 20px;
+      }
+
+      #grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-gap: 4px;
+        width: 55%;
+        margin: 0 auto;
+      }
+
+      .tile {
+        width: 100%;
+        padding-top: 70%;
+        position: relative;
+        background: #222;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: transform 0.5s;
+        transform-style: preserve-3d;
+      }
+
+      .tile.flipped {
+        transform: rotateY(180deg);
+      }
+
+      .front,
+      .back {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        backface-visibility: hidden;
+        font-size: 20px;
+        padding: 5px;
+        text-align: center;
+      }
+
+      .front {
+        background: #333;
+      }
+
+      .back {
+        background: #4caf50;
+        transform: rotateY(180deg);
+        font-size: 16px;
+        line-height: 1.2;
+      }
+
+      #message {
+        margin-top: 20px;
+        font-size: 40px;
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2 style="font-size: 40px">Brain Drain Answer Grid</h2>
+    <div id="grid"></div>
+    <div id="message">⚠ Enough brain drained.... No more peeking!!</div>
+
+    <script>
+      // 25 REAL ANSWERS WITH QUESTION NUMBERS
+      const answers = [
+        '1. Team Loops',
+        '2. Drishyam 2',
+        '3. E',
+        '4. 31st December',
+        '5. √50 + √18',
+        '6. His son',
+        '7. 50',
+        '8. 3 minutes',
+        '9. Undefined behavior',
+        '10. 140',
+        '11. 216',
+        '12. ₹5',
+        '13. 8:10',
+        '14. 5',
+        '15. B',
+        '16. 42',
+        '17. 18',
+        '18. 11',
+        '19. 20',
+        '20. Pencil lead',
+        '21. 60 minutes',
+        '22. Increases',
+        '23. Chicken',
+        '24. C',
+        '25. NMKOYE',
+      ]
+
+      // FUN STUFF FOR THE OTHER 24 TILES
+      const funElements = [
+        '😈 Nice Try',
+        '😂 Not an answer',
+        '🚫 Fake Hint',
+        '✨ Magic?',
+        '🤡 Clown Move',
+        '🧠 Brain Go Brr',
+        '🎲 Random Luck',
+        '??!?!!',
+        '🌀 Glitch',
+        '👉 Look Elsewhere',
+        'LOL',
+        'Nope.',
+        '🙃 Reverse Logic',
+        '404 Hint Not Found',
+        'Try Again Later',
+        '👀 Blink and Miss',
+        '💀 Dead End',
+        '🧩 Missing Piece',
+        '😵 Too Slow',
+        '🦄 Unicorn??',
+        '🎭 Misdirection',
+        '👻 Ghost Hint',
+        '🙈 Hidden Truth',
+        '🤨 Suspicious',
+      ]
+
+      // Merge 49 tiles
+      const allTiles = [...answers, ...funElements].sort(
+        () => Math.random() - 0.5
+      )
+
+      if (localStorage.getItem('gridUsed') === 'yes') {
+        document.body.innerHTML =
+          "<h1 style='margin-top:40px;color:#ff4444'>⚠ GRID ALREADY VIEWED</h1>"
+      } else {
+        const grid = document.getElementById('grid')
+        const tiles = []
+
+        // Create 49 numbered tiles
+        for (let i = 0; i < 49; i++) {
+          const tile = document.createElement('div')
+          tile.className = 'tile'
+          tile.innerHTML = `
+            <div class="front">${i + 1}</div>
+            <div class="back">${allTiles[i]}</div>
+          `
+          grid.appendChild(tile)
+          tiles.push(tile)
+        }
+
+        const order = [...Array(49).keys()].sort(() => Math.random() - 0.5)
+        let index = 0
+        const batchSize = 7
+        const visibleTime = 800 // **1 second**
+
+        function flipBatch() {
+          if (index >= order.length) {
+            localStorage.setItem('gridUsed', 'yes')
+            document.getElementById('message').style.display = 'block'
+            return
+          }
+
+          const batch = order.slice(index, index + batchSize)
+
+          batch.forEach((i) => tiles[i].classList.add('flipped'))
+
+          setTimeout(() => {
+            batch.forEach((i) => tiles[i].classList.remove('flipped'))
+          }, visibleTime)
+
+          index += batchSize
+          setTimeout(flipBatch, visibleTime + 400)
+        }
+
+        setTimeout(flipBatch, 600)
+      }
+    </script>
+  </body>
+</html>
